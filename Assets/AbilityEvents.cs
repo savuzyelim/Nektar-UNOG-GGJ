@@ -9,10 +9,5 @@ public enum AbilityType
 
 public static class AbilityEvents
 {
-    public static Action<
-        AbilityType,
-        Vector2,
-        float,
-        float
-    > OnAbilityUsed;
+    public static Action<AbilityType,Vector2,float,float,int> OnAbilityUsed;
 }

@@ -5,11 +5,13 @@ public class EnemyAbilityResponse : MonoBehaviour
 {
     Rigidbody2D rb;
     EnemyMovement enemyMovement;
+    EnemyHealth enemyHealth;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         enemyMovement = GetComponent<EnemyMovement>();
+        enemyHealth = GetComponent<EnemyHealth>();
     }
 
     void OnEnable()
@@ -24,7 +26,7 @@ public class EnemyAbilityResponse : MonoBehaviour
 
     
 
-    void OnAbilityUsed(AbilityType type,Vector2 center,float radius,float force)
+    void OnAbilityUsed(AbilityType type,Vector2 center,float radius,float force,int damage)
     {
         Vector2 diff = (Vector2)transform.position - center;
 
@@ -38,14 +40,15 @@ public class EnemyAbilityResponse : MonoBehaviour
                 break;
 
             case AbilityType.Knockback:
-                StartCoroutine(WaitTheKnockback(diff, force));
+                StartCoroutine(WaitTheKnockback(diff, force, damage));
                 break;
         }
     }
-    IEnumerator WaitTheKnockback(Vector2 diff, float force)
+    IEnumerator WaitTheKnockback(Vector2 diff, float force, int damage)
     {
         enemyMovement.SetState(EnemyState.Idle);
         rb.AddForce(diff.normalized * force, ForceMode2D.Impulse);
+        enemyHealth.TakeDamage(damage);
         yield return new WaitForSeconds(.5f);
         rb.linearVelocity = Vector2.zero;
         yield return new WaitForSeconds(.5f);

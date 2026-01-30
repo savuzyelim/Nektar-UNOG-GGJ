@@ -4,6 +4,7 @@ public class CatTransform : MonoBehaviour
 {
     public bool normalCat;
     [SerializeField] GameObject hammer;
+    [SerializeField] SpriteRenderer sprite;
     [Header("Pull")]
     [SerializeField] float pullRadius = 6f;
     [SerializeField] float pullForce = 5f;
@@ -11,6 +12,7 @@ public class CatTransform : MonoBehaviour
     [Header("Knockback")]
     [SerializeField] float knockbackRadius = 5f;
     [SerializeField] float knockbackForce = 15f;
+    [SerializeField] int knockbackDammage = 1;
     private void Start()
     {
         normalCat = true;
@@ -25,7 +27,7 @@ public class CatTransform : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.E) && normalCat)
         {
-            AbilityEvents.OnAbilityUsed?.Invoke(AbilityType.Pull, transform.position, pullRadius, pullForce);
+            AbilityEvents.OnAbilityUsed?.Invoke(AbilityType.Pull, transform.position, pullRadius, pullForce, 0);
         }
     }
 
@@ -33,14 +35,14 @@ public class CatTransform : MonoBehaviour
     {
         if (normalCat)
         {
-            transform.localScale = new Vector2(1, .5f);
+            sprite.color = Color.white;
             hammer.SetActive(false);
         }
         else
         {
-            transform.localScale = new Vector2(.5f, 1);
+            sprite.color = Color.green;
             hammer.SetActive(true);
-            AbilityEvents.OnAbilityUsed?.Invoke(AbilityType.Knockback, transform.position, knockbackRadius, knockbackForce);
+            AbilityEvents.OnAbilityUsed?.Invoke(AbilityType.Knockback, transform.position, knockbackRadius, knockbackForce, knockbackDammage);
         }
     }
     void OnDrawGizmosSelected()
