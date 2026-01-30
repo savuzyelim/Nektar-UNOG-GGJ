@@ -18,11 +18,6 @@ public class EnemyMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        /*if (CurrentState != EnemyState.Pulled)
-        {
-            rb.linearVelocity = Vector2.zero;
-            return;
-        }*/
 
         Vector2 dir = player.position - transform.position;
         float distance = dir.magnitude;
