@@ -3,56 +3,98 @@ using UnityEngine.SceneManagement;
 
 public class Hammer : MonoBehaviour
 {
-    public Camera cam;
-    Vector2 mousePos;
-    [SerializeField] float angleOffset;
+    [Header("References")]
+    [SerializeField] Camera cam;
     [SerializeField] Rigidbody2D hammerRb;
-    [SerializeField] GameObject hammerObj;
-    bool canThrow;
-    [SerializeField] float throwForce;
-    [SerializeField] float hammerMoveSpeed;
+    [SerializeField] Transform hammer;
 
-    private void Start()
-    {
-        canThrow = true;
-    }
-    private void Update()
+    [Header("Settings")]
+    [SerializeField] float throwForce = 10f;
+    [SerializeField] float returnSpeed = 12f;
+    [SerializeField] float angleOffset = 90f;
+    [SerializeField] float attachDistance = 0.8f;
+
+    Vector2 mousePos;
+    HammerState currentState = HammerState.Attached;
+
+    void Update()
     {
         mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-        //HAmmerý fýrlat
-        if (canThrow && Input.GetMouseButtonDown(0))
-        {
-            hammerObj.transform.parent = null;
-            hammerRb.AddForce(hammerObj.transform.up * throwForce, ForceMode2D.Impulse);
-            canThrow = false;
-        }
-        //Hammerý geri çaðýr
-        if(!canThrow)
-        {
-            if (Input.GetMouseButtonDown(1))
-            {
-                if (Vector2.Distance(transform.position, hammerObj.transform.position) > 1f)
-                {
-                    Vector2 dir = transform.position - hammerObj.transform.position;
-                    hammerRb.linearVelocity = dir.normalized * hammerMoveSpeed;
-                }
-            }
-            if(Vector2.Distance(transform.position, hammerObj.transform.position) <= 1f)
-            {
-                hammerRb.linearVelocity = Vector2.zero;
-                hammerObj.transform.SetParent(this.transform);
-                canThrow = true;
-                Debug.Log(canThrow);
-            }
-        }
-        if(Input.GetKeyDown(KeyCode.R)){
+
+        HandleInput();
+
+        if (Input.GetKeyDown(KeyCode.R))
             SceneManager.LoadScene("EnesScene");
+    }
+
+    void FixedUpdate()
+    {
+        RotateHammer();
+
+        switch (currentState)
+        {
+            case HammerState.Returning:
+                ReturnMovement();
+                break;
         }
     }
-    private void FixedUpdate()
+
+    // ================= INPUT =================
+
+    void HandleInput()
     {
-        Vector2 hammerDir = mousePos - new Vector2(transform.position.x, transform.position.z);
-        float angle = Mathf.Atan2(hammerDir.y, hammerDir.x) * Mathf.Rad2Deg - angleOffset;
+        if (Input.GetMouseButtonDown(0) && currentState == HammerState.Attached)
+            Throw();
+
+        if (Input.GetMouseButtonDown(1) && currentState == HammerState.Thrown)
+            StartReturn();
+    }
+
+    // ================= STATES =================
+
+    void Throw()
+    {
+        currentState = HammerState.Thrown;
+
+        hammer.SetParent(null);
+        hammerRb.linearVelocity = Vector2.zero;
+        hammerRb.angularVelocity = 0f;
+
+        hammerRb.AddForce(hammer.up * throwForce, ForceMode2D.Impulse);
+    }
+
+    void StartReturn()
+    {
+        currentState = HammerState.Returning;
+    }
+
+    void ReturnMovement()
+    {
+        Vector2 dir = (Vector2)transform.position - hammerRb.position;
+        hammerRb.linearVelocity = dir.normalized * returnSpeed;
+
+        if (dir.magnitude <= attachDistance)
+            Attach();
+    }
+
+    void Attach()
+    {
+        currentState = HammerState.Attached;
+
+        hammerRb.linearVelocity = Vector2.zero;
+        hammerRb.angularVelocity = 0f;
+
+        hammer.SetParent(transform);
+        hammer.localPosition = new Vector3(0,1.2f,0);
+        hammer.localRotation = Quaternion.identity;
+    }
+
+    // ================= ROTATION =================
+
+    void RotateHammer()
+    {
+        Vector2 dir = mousePos - (Vector2)transform.position;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - angleOffset;
         transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 }

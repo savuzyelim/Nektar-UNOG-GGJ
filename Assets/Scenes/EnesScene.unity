@@ -222,11 +222,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 1843165811}
-  angleOffset: 90
   hammerRb: {fileID: 1218329834}
-  hammerObj: {fileID: 1218329831}
-  throwForce: 2
-  hammerMoveSpeed: 5
+  hammer: {fileID: 1218329832}
+  throwForce: 3
+  returnSpeed: 5
+  angleOffset: 90
+  attachDistance: 1
 --- !u!1 &1128258989
 GameObject:
   m_ObjectHideFlags: 0
