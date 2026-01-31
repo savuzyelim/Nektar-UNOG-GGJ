@@ -1,5 +1,8 @@
 public enum EnemyState
 {
     Idle,
-    Pulled
+    Investigating,
+    Aggro,
+    Panic,
+    Hidden
 }

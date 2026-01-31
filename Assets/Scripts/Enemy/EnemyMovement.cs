@@ -22,7 +22,7 @@ public class EnemyMovement : MonoBehaviour
         Vector2 dir = player.position - transform.position;
         float distance = dir.magnitude;
 
-        if(CurrentState == EnemyState.Pulled)
+        if(CurrentState == EnemyState.Investigating)
         {
             if (distance > stopDistance)
                 rb.linearVelocity = dir.normalized * moveSpeed;

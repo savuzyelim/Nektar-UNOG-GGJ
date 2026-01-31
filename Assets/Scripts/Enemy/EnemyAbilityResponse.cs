@@ -36,7 +36,7 @@ public class EnemyAbilityResponse : MonoBehaviour
         switch (type)
         {
             case AbilityType.Pull:
-                enemyMovement.SetState(EnemyState.Pulled);
+                enemyMovement.SetState(EnemyState.Investigating);
                 break;
 
             case AbilityType.Knockback:
@@ -52,6 +52,6 @@ public class EnemyAbilityResponse : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         rb.linearVelocity = Vector2.zero;
         yield return new WaitForSeconds(.5f);
-        enemyMovement.SetState(EnemyState.Pulled);
+        enemyMovement.SetState(EnemyState.Investigating);
     }
 }
